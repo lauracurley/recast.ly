@@ -2,42 +2,50 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      currentVideo: {},
-      videos: [{}, {}, {}, {}, {}],
-    };
-  }
-
-  componentDidMount() {
-    var options = {
+    this.options = {
       key: window.YOUTUBE_API_KEY, 
       maxResults: 5, 
-      q: 'grey',
+      q: 'dogs',
       videoEmbeddable: true,
       type: 'video',
       part: 'snippet'
     };
-    this.serverRequest = this.props.videoData(options, function (result) {
+
+    this.state = {
+      currentVideo: {},
+      videos: [{}, {}, {}, {}, {}]
+    };
+  }
+
+  getVideos() {
+    this.serverRequest = this.props.videoData(this.options, function (result) {
       this.setState({
-        currentVideo: result[0],
-        videos: result
+        currentVideo: result.items[0],
+        videos: result.items
       });
     }.bind(this));
   }
 
-  onListEntryClick(clickedSong) {
-    console.log(clickedSong.props.video);
-    // debugger;
+  componentDidMount() {
+    this.getVideos();
+  }
+
+  onListEntryClick(video) {
+    console.log(video);
     this.setState({
-      currentVideo: clickedSong.props.video
+      currentVideo: video.props.video
     });
+  }
+
+  onSearchClick(searchTerm) {
+    this.options.q = searchTerm;
+    this.getVideos();
   }
 
   render() {
     return (
       <div>
-        <Nav />
+        <Nav searchEvent={this.onSearchClick.bind(this)}/>
         <div className="col-md-7">
           <VideoPlayer currentVideo={this.state.currentVideo} />
         </div>
