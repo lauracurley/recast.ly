@@ -11,6 +11,8 @@ class App extends React.Component {
       part: 'snippet'
     };
 
+    this.onSearchClick = _.debounce(this.onSearchClick, 400);
+
     this.state = {
       currentVideo: {},
       videos: [{}, {}, {}, {}, {}]
