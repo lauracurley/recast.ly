@@ -4,9 +4,26 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      currentVideo: this.props.videoData.shift(),
-      videos: this.props.videoData,
+      currentVideo: {},
+      videos: [{}, {}, {}, {}, {}],
     };
+  }
+
+  componentDidMount() {
+    var options = {
+      key: window.YOUTUBE_API_KEY, 
+      maxResults: 5, 
+      q: 'grey',
+      videoEmbeddable: true,
+      type: 'video',
+      part: 'snippet'
+    };
+    this.serverRequest = this.props.videoData(options, function (result) {
+      this.setState({
+        currentVideo: result[0],
+        videos: result
+      });
+    }.bind(this));
   }
 
   onListEntryClick(clickedSong) {
@@ -32,4 +49,4 @@ class App extends React.Component {
   }
 
 }
-ReactDOM.render(<App videoData={window.exampleVideoData} />, document.getElementById('app'));
+ReactDOM.render(<App videoData={window.searchYouTube.bind(this)} />, document.getElementById('app'));
